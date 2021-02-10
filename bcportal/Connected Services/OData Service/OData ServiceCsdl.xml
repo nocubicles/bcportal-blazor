@@ -1,0 +1,374 @@
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:DataServices>
+    <Schema Namespace="Microsoft.NAV" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="entityMetadata">
+        <Key>
+          <PropertyRef Name="entityName" />
+        </Key>
+        <Property Name="entityName" Type="Edm.String" Nullable="false" />
+        <Property Name="entitySetName" Type="Edm.String" />
+        <Property Name="entityCaptions" Type="Collection(Microsoft.NAV.entityMetadataLabel)" />
+        <Property Name="entitySetCaptions" Type="Collection(Microsoft.NAV.entityMetadataLabel)" />
+        <Property Name="properties" Type="Collection(Microsoft.NAV.entityMetadataField)" />
+        <Property Name="actions" Type="Collection(Microsoft.NAV.entityMetadataAction)" />
+        <Property Name="enumMembers" Type="Collection(Microsoft.NAV.entityMetadataEnumMember)" />
+      </EntityType>
+      <ComplexType Name="entityMetadataLabel">
+        <Property Name="languageCode" Type="Edm.Int32" Nullable="false" />
+        <Property Name="caption" Type="Edm.String" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="entityMetadataField">
+        <Property Name="name" Type="Edm.String" Nullable="false" />
+        <Property Name="captions" Type="Collection(Microsoft.NAV.entityMetadataLabel)" />
+      </ComplexType>
+      <ComplexType Name="entityMetadataAction">
+        <Property Name="name" Type="Edm.String" Nullable="false" />
+        <Property Name="captions" Type="Collection(Microsoft.NAV.entityMetadataLabel)" />
+      </ComplexType>
+      <ComplexType Name="entityMetadataEnumMember">
+        <Property Name="name" Type="Edm.String" Nullable="false" />
+        <Property Name="value" Type="Edm.Int32" Nullable="false" />
+        <Property Name="captions" Type="Collection(Microsoft.NAV.entityMetadataLabel)" />
+      </ComplexType>
+      <EntityType Name="assemblyOrder">
+        <Key>
+          <PropertyRef Name="DocumentType" />
+          <PropertyRef Name="No" />
+        </Key>
+        <Property Name="DocumentType" Type="Edm.String" Nullable="false" />
+        <Property Name="No" Type="Edm.String" Nullable="false" MaxLength="20" />
+        <Property Name="SystemId" Type="Edm.Guid" />
+        <Property Name="Status" Type="Edm.String" />
+        <Property Name="Description" Type="Edm.String" MaxLength="100" />
+        <Property Name="ItemNo" Type="Edm.String" MaxLength="20" />
+        <Property Name="DueDate" Type="Edm.Date" />
+        <Property Name="EndingDate" Type="Edm.Date" />
+        <Property Name="PostingDate" Type="Edm.Date" />
+        <Property Name="StartingDate" Type="Edm.Date" />
+        <Property Name="Quantity" Type="Edm.Decimal" Scale="Variable" />
+        <Property Name="QuantityBase" Type="Edm.Decimal" Scale="Variable" />
+        <Property Name="QuantityToAssemble" Type="Edm.Decimal" Scale="Variable" />
+        <Property Name="AssembledQuantity" Type="Edm.Decimal" Scale="Variable" />
+        <Property Name="AssembledQuantityBase" Type="Edm.Decimal" Scale="Variable" />
+        <Property Name="RemainingQuantity" Type="Edm.Decimal" Scale="Variable" />
+        <Property Name="RemainingQuantityBase" Type="Edm.Decimal" Scale="Variable" />
+        <Property Name="QtyPerUnitOfMeasure" Type="Edm.Decimal" Scale="Variable" />
+        <NavigationProperty Name="assemblyOrderLines" Type="Collection(Microsoft.NAV.assemblyOrderLine)" ContainsTarget="true">
+          <ReferentialConstraint Property="No" ReferencedProperty="documentNo" />
+        </NavigationProperty>
+      </EntityType>
+      <Action Name="addTrackingToLine" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Microsoft.NAV.assemblyOrder" />
+      </Action>
+      <Action Name="postAssemblyOrder" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Microsoft.NAV.assemblyOrder" />
+      </Action>
+      <EntityType Name="assemblyOrderLine">
+        <Key>
+          <PropertyRef Name="documentType" />
+          <PropertyRef Name="documentNo" />
+          <PropertyRef Name="lineNo" />
+        </Key>
+        <Property Name="documentType" Type="Edm.String" Nullable="false" />
+        <Property Name="documentNo" Type="Edm.String" Nullable="false" MaxLength="20" />
+        <Property Name="lineNo" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Avail_Warning" Type="Edm.Boolean" />
+        <Property Name="Type" Type="Edm.String" />
+        <Property Name="No" Type="Edm.String" MaxLength="20" />
+        <Property Name="Description" Type="Edm.String" MaxLength="100" />
+        <Property Name="Description_2" Type="Edm.String" MaxLength="50" />
+        <Property Name="Variant_Code" Type="Edm.String" MaxLength="10" />
+        <Property Name="Location_Code" Type="Edm.String" MaxLength="10" />
+        <Property Name="Unit_of_Measure_Code" Type="Edm.String" MaxLength="10" />
+        <Property Name="Quantity_per" Type="Edm.Decimal" Scale="Variable" />
+        <Property Name="Quantity" Type="Edm.Decimal" Scale="Variable" />
+        <Property Name="Quantity_to_Consume" Type="Edm.Decimal" Scale="Variable" />
+        <Property Name="Consumed_Quantity" Type="Edm.Decimal" Scale="Variable" />
+        <Property Name="Remaining_Quantity" Type="Edm.Decimal" Scale="Variable" />
+        <Property Name="Qty_Picked" Type="Edm.Decimal" Scale="Variable" />
+        <Property Name="Pick_Qty" Type="Edm.Decimal" Scale="Variable" />
+        <Property Name="Due_Date" Type="Edm.Date" />
+        <Property Name="Lead_Time_Offset" Type="Edm.String" />
+        <Property Name="Bin_Code" Type="Edm.String" MaxLength="20" />
+        <Property Name="Inventory_Posting_Group" Type="Edm.String" MaxLength="20" />
+        <Property Name="Unit_Cost" Type="Edm.Decimal" Scale="Variable" />
+        <Property Name="Cost_Amount" Type="Edm.Decimal" Scale="Variable" />
+        <Property Name="Reserved_Quantity" Type="Edm.Decimal" Scale="Variable" />
+        <Property Name="Reserve" Type="Edm.String" />
+        <Property Name="ReservationStatusField" Type="Edm.String" />
+        <Property Name="Qty_per_Unit_of_Measure" Type="Edm.Decimal" Scale="Variable" />
+        <Property Name="Resource_Usage_Type" Type="Edm.String" />
+        <Property Name="Appl_to_Item_Entry" Type="Edm.Int32" />
+        <Property Name="Appl_from_Item_Entry" Type="Edm.Int32" />
+        <Property Name="Shortcut_Dimension_1_Code" Type="Edm.String" MaxLength="20" />
+        <Property Name="Shortcut_Dimension_2_Code" Type="Edm.String" MaxLength="20" />
+        <Property Name="ShortcutDimCode_x005B_3_x005D_" Type="Edm.String" />
+        <Property Name="ShortcutDimCode_x005B_4_x005D_" Type="Edm.String" />
+        <Property Name="ShortcutDimCode_x005B_5_x005D_" Type="Edm.String" />
+        <Property Name="ShortcutDimCode_x005B_6_x005D_" Type="Edm.String" />
+        <Property Name="ShortcutDimCode_x005B_7_x005D_" Type="Edm.String" />
+        <Property Name="ShortcutDimCode_x005B_8_x005D_" Type="Edm.String" />
+        <NavigationProperty Name="assemblyOrder" Type="Microsoft.NAV.assemblyOrder" ContainsTarget="true">
+          <ReferentialConstraint Property="documentNo" ReferencedProperty="No" />
+          <ReferentialConstraint Property="documentType" ReferencedProperty="DocumentType" />
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="itemTracking">
+        <Key>
+          <PropertyRef Name="EntryNo" />
+          <PropertyRef Name="Positive" />
+        </Key>
+        <Property Name="EntryNo" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Positive" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="QuantityBase" Type="Edm.Decimal" Scale="Variable" />
+        <Property Name="ItemTracking" Type="Edm.String" />
+        <Property Name="ReservationStatus" Type="Edm.String" />
+        <Property Name="CreationDate" Type="Edm.Date" />
+        <Property Name="ShipmentDate" Type="Edm.Date" />
+        <Property Name="ItemNo" Type="Edm.String" MaxLength="20" />
+        <Property Name="LocationCode" Type="Edm.String" MaxLength="10" />
+        <Property Name="SourceType" Type="Edm.Int32" />
+        <Property Name="SourceSubtype" Type="Edm.String" />
+        <Property Name="SourceID" Type="Edm.String" MaxLength="20" />
+        <Property Name="SourceRefNo" Type="Edm.Int32" />
+        <Property Name="LotNo" Type="Edm.String" MaxLength="50" />
+        <Property Name="QtyperUnitofMeasure" Type="Edm.Decimal" Scale="Variable" />
+        <Property Name="Description" Type="Edm.String" MaxLength="100" />
+      </EntityType>
+      <EntityType Name="itemStockState">
+        <Key>
+          <PropertyRef Name="itemNo" />
+          <PropertyRef Name="locationCode" />
+          <PropertyRef Name="lotNo" />
+        </Key>
+        <Property Name="itemNo" Type="Edm.String" Nullable="false" MaxLength="20" />
+        <Property Name="locationCode" Type="Edm.String" Nullable="false" MaxLength="10" />
+        <Property Name="remainingQuantity" Type="Edm.Decimal" Scale="Variable" />
+        <Property Name="lotNo" Type="Edm.String" Nullable="false" MaxLength="50" />
+      </EntityType>
+      <EntityType Name="company">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.Guid" Nullable="false" />
+        <Property Name="systemVersion" Type="Edm.String" />
+        <Property Name="name" Type="Edm.String" MaxLength="30" />
+        <Property Name="displayName" Type="Edm.String" MaxLength="250" />
+        <Property Name="businessProfileId" Type="Edm.String" MaxLength="250" />
+        <Property Name="systemCreatedAt" Type="Edm.DateTimeOffset" />
+        <Property Name="systemCreatedBy" Type="Edm.Guid" />
+        <Property Name="systemModifiedAt" Type="Edm.DateTimeOffset" />
+        <Property Name="systemModifiedBy" Type="Edm.Guid" />
+        <NavigationProperty Name="assemblyOrders" Type="Collection(Microsoft.NAV.assemblyOrder)" ContainsTarget="true" />
+        <NavigationProperty Name="assemblyOrderLines" Type="Collection(Microsoft.NAV.assemblyOrderLine)" ContainsTarget="true" />
+        <NavigationProperty Name="itemTrackings" Type="Collection(Microsoft.NAV.itemTracking)" ContainsTarget="true" />
+        <NavigationProperty Name="itemStockStates" Type="Collection(Microsoft.NAV.itemStockState)" ContainsTarget="true" />
+        <Annotation Term="OData.Community.Keys.V1.AlternateKeys">
+          <Collection>
+            <Record Type="OData.Community.Keys.V1.AlternateKey">
+              <PropertyValue Property="Key">
+                <Collection>
+                  <Record Type="OData.Community.Keys.V1.PropertyRef">
+                    <PropertyValue Property="Alias" String="businessProfileId" />
+                    <PropertyValue Property="Name" PropertyPath="businessProfileId" />
+                  </Record>
+                </Collection>
+              </PropertyValue>
+            </Record>
+            <Record Type="OData.Community.Keys.V1.AlternateKey">
+              <PropertyValue Property="Key">
+                <Collection>
+                  <Record Type="OData.Community.Keys.V1.PropertyRef">
+                    <PropertyValue Property="Alias" String="name" />
+                    <PropertyValue Property="Name" PropertyPath="name" />
+                  </Record>
+                </Collection>
+              </PropertyValue>
+            </Record>
+          </Collection>
+        </Annotation>
+      </EntityType>
+      <EntityType Name="subscriptions">
+        <Key>
+          <PropertyRef Name="subscriptionId" />
+        </Key>
+        <Property Name="subscriptionId" Type="Edm.String" Nullable="false" MaxLength="150" />
+        <Property Name="notificationUrl" Type="Edm.String" Nullable="false" />
+        <Property Name="resource" Type="Edm.String" Nullable="false" />
+        <Property Name="userId" Type="Edm.Guid" />
+        <Property Name="lastModifiedDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="clientState" Type="Edm.String" MaxLength="2048" />
+        <Property Name="expirationDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="systemCreatedAt" Type="Edm.DateTimeOffset" />
+        <Property Name="systemCreatedBy" Type="Edm.Guid" />
+        <Property Name="systemModifiedAt" Type="Edm.DateTimeOffset" />
+        <Property Name="systemModifiedBy" Type="Edm.Guid" />
+      </EntityType>
+      <EntityContainer Name="NAV">
+        <EntitySet Name="entityDefinitions" EntityType="Microsoft.NAV.entityMetadata" />
+        <EntitySet Name="companies" EntityType="Microsoft.NAV.company">
+          <Annotation Term="Org.OData.Capabilities.V1.ChangeTracking">
+            <Record>
+              <PropertyValue Property="Supported" Bool="false" />
+            </Record>
+          </Annotation>
+          <Annotation Term="Org.OData.Capabilities.V1.DeleteRestrictions">
+            <Record>
+              <PropertyValue Property="Deletable" Bool="false" />
+            </Record>
+          </Annotation>
+          <Annotation Term="Org.OData.Capabilities.V1.InsertRestrictions">
+            <Record>
+              <PropertyValue Property="Insertable" Bool="false" />
+            </Record>
+          </Annotation>
+          <Annotation Term="Org.OData.Capabilities.V1.UpdateRestrictions">
+            <Record>
+              <PropertyValue Property="Updatable" Bool="false" />
+            </Record>
+          </Annotation>
+        </EntitySet>
+        <EntitySet Name="subscriptions" EntityType="Microsoft.NAV.subscriptions">
+          <Annotation Term="Org.OData.Capabilities.V1.ChangeTracking">
+            <Record>
+              <PropertyValue Property="Supported" Bool="false" />
+            </Record>
+          </Annotation>
+          <Annotation Term="Org.OData.Capabilities.V1.DeleteRestrictions">
+            <Record>
+              <PropertyValue Property="Deletable" Bool="true" />
+            </Record>
+          </Annotation>
+          <Annotation Term="Org.OData.Capabilities.V1.InsertRestrictions">
+            <Record>
+              <PropertyValue Property="Insertable" Bool="true" />
+            </Record>
+          </Annotation>
+          <Annotation Term="Org.OData.Capabilities.V1.UpdateRestrictions">
+            <Record>
+              <PropertyValue Property="Updatable" Bool="true" />
+            </Record>
+          </Annotation>
+        </EntitySet>
+        <EntitySet Name="assemblyOrders" EntityType="Microsoft.NAV.assemblyOrder">
+          <Annotation Term="Org.OData.Capabilities.V1.ChangeTracking">
+            <Record>
+              <PropertyValue Property="Supported" Bool="false" />
+            </Record>
+          </Annotation>
+          <Annotation Term="Org.OData.Capabilities.V1.DeleteRestrictions">
+            <Record>
+              <PropertyValue Property="Deletable" Bool="true" />
+            </Record>
+          </Annotation>
+          <Annotation Term="Org.OData.Capabilities.V1.InsertRestrictions">
+            <Record>
+              <PropertyValue Property="Insertable" Bool="true" />
+            </Record>
+          </Annotation>
+          <Annotation Term="Org.OData.Capabilities.V1.UpdateRestrictions">
+            <Record>
+              <PropertyValue Property="Updatable" Bool="true" />
+            </Record>
+          </Annotation>
+        </EntitySet>
+        <EntitySet Name="assemblyOrderLines" EntityType="Microsoft.NAV.assemblyOrderLine">
+          <Annotation Term="Org.OData.Capabilities.V1.ChangeTracking">
+            <Record>
+              <PropertyValue Property="Supported" Bool="false" />
+            </Record>
+          </Annotation>
+          <Annotation Term="Org.OData.Capabilities.V1.DeleteRestrictions">
+            <Record>
+              <PropertyValue Property="Deletable" Bool="true" />
+            </Record>
+          </Annotation>
+          <Annotation Term="Org.OData.Capabilities.V1.InsertRestrictions">
+            <Record>
+              <PropertyValue Property="Insertable" Bool="true" />
+            </Record>
+          </Annotation>
+          <Annotation Term="Org.OData.Capabilities.V1.UpdateRestrictions">
+            <Record>
+              <PropertyValue Property="Updatable" Bool="true" />
+            </Record>
+          </Annotation>
+        </EntitySet>
+        <EntitySet Name="itemTrackings" EntityType="Microsoft.NAV.itemTracking">
+          <Annotation Term="Org.OData.Capabilities.V1.ChangeTracking">
+            <Record>
+              <PropertyValue Property="Supported" Bool="false" />
+            </Record>
+          </Annotation>
+          <Annotation Term="Org.OData.Capabilities.V1.DeleteRestrictions">
+            <Record>
+              <PropertyValue Property="Deletable" Bool="true" />
+            </Record>
+          </Annotation>
+          <Annotation Term="Org.OData.Capabilities.V1.InsertRestrictions">
+            <Record>
+              <PropertyValue Property="Insertable" Bool="true" />
+            </Record>
+          </Annotation>
+          <Annotation Term="Org.OData.Capabilities.V1.UpdateRestrictions">
+            <Record>
+              <PropertyValue Property="Updatable" Bool="true" />
+            </Record>
+          </Annotation>
+        </EntitySet>
+        <EntitySet Name="itemStockStates" EntityType="Microsoft.NAV.itemStockState">
+          <Annotation Term="Org.OData.Capabilities.V1.ChangeTracking">
+            <Record>
+              <PropertyValue Property="Supported" Bool="false" />
+            </Record>
+          </Annotation>
+          <Annotation Term="Org.OData.Capabilities.V1.DeleteRestrictions">
+            <Record>
+              <PropertyValue Property="Deletable" Bool="false" />
+            </Record>
+          </Annotation>
+          <Annotation Term="Org.OData.Capabilities.V1.InsertRestrictions">
+            <Record>
+              <PropertyValue Property="Insertable" Bool="false" />
+            </Record>
+          </Annotation>
+          <Annotation Term="Org.OData.Capabilities.V1.UpdateRestrictions">
+            <Record>
+              <PropertyValue Property="Updatable" Bool="false" />
+            </Record>
+          </Annotation>
+        </EntitySet>
+      </EntityContainer>
+      <Annotations Target="Microsoft.NAV.assemblyOrder/DocumentType">
+        <Annotation Term="Org.OData.Core.V1.IsLanguageDependent" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.NAV.assemblyOrder/Status">
+        <Annotation Term="Org.OData.Core.V1.IsLanguageDependent" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.NAV.assemblyOrderLine/documentType">
+        <Annotation Term="Org.OData.Core.V1.IsLanguageDependent" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.NAV.assemblyOrderLine/Type">
+        <Annotation Term="Org.OData.Core.V1.IsLanguageDependent" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.NAV.assemblyOrderLine/Reserve">
+        <Annotation Term="Org.OData.Core.V1.IsLanguageDependent" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.NAV.assemblyOrderLine/ReservationStatusField">
+        <Annotation Term="Org.OData.Core.V1.IsLanguageDependent" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.NAV.assemblyOrderLine/Resource_Usage_Type">
+        <Annotation Term="Org.OData.Core.V1.IsLanguageDependent" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.NAV.itemTracking/ItemTracking">
+        <Annotation Term="Org.OData.Core.V1.IsLanguageDependent" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.NAV.itemTracking/ReservationStatus">
+        <Annotation Term="Org.OData.Core.V1.IsLanguageDependent" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.NAV.itemTracking/SourceSubtype">
+        <Annotation Term="Org.OData.Core.V1.IsLanguageDependent" Bool="true" />
+      </Annotations>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

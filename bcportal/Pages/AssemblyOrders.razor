@@ -1,0 +1,60 @@
+﻿@page "/assemblyorders"
+
+@using bcportal.Data
+@inject bcportal.Services.BCService BCService
+@using Microsoft.NAV
+
+<h1>Assembly Orders</h1>
+
+<p>These are all the assembly orders we have</p>
+
+@if (assemblyOrders == null)
+{
+    <p><em>Loading..</em></p>
+}
+else
+{
+    <p>Total number of assembly orders: @orderCount</p>
+    <button @onclick="CreateNewOrder">Create new Order</button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Order No.
+                </th>
+                <th>
+                    Output item
+                </th>
+                <th>
+                    Details
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var assemblyOrder in assemblyOrders)
+            {
+                <tr>
+                    <td>@assemblyOrder.No</td>
+                    <td>@assemblyOrder.ItemNo</td>
+                    <td><a href="/assemblyorders/@assemblyOrder.No">Go</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private assemblyOrder[] assemblyOrders;
+    private int orderCount;
+
+    protected async Task CreateNewOrder()
+    {
+        await BCService.CreateAssemblyOrder();
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        assemblyOrders = await BCService.GetAssemblyOrders();
+        orderCount = await BCService.GetAssemblyOrdersCount();
+    }
+
+}

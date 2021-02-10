@@ -1,0 +1,162 @@
+﻿@page "/assemblyorders/{No}"
+
+@inject bcportal.Services.BCService BCService
+@inject IJSRuntime JS;
+@using Microsoft.NAV
+
+<h1>Assembly Order</h1>
+
+@if (assemblyOrder == null)
+{
+    <p><em>Loading..</em></p>
+}
+else
+{
+
+    <h1>Order No: @assemblyOrder.No</h1>
+    <h2>Item: @assemblyOrder.ItemNo</h2>
+    <h2>Desc: @assemblyOrder.Description</h2>
+    <h2>Quantity (Base): @assemblyOrder.QuantityBase</h2>
+    <h2>Remaining Quantity (Base): @assemblyOrder.RemainingQuantityBase</h2>
+    <h2>Assembled quantity (Base): @assemblyOrder.AssembledQuantityBase</h2>
+
+    <p>Insert the quantity you wish to assemble:</p>
+    <input @bind="QuantityToPost" type="number" />
+    <button @onclick="UpdateOrderQuantityToPost">Update Quantity To Assemble</button>
+    <button @onclick="PostOrder">Post Order</button>
+    @if (APIError)
+    {
+        @ErrorMessage
+    }
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Line No.
+                </th>
+                <th>
+                    Component Item
+                </th>
+                <th>
+                    Quantity Per
+                </th>
+                <th>
+                    Component Quantity
+                </th>
+                <th>
+                    Quantity To Consume
+                </th>
+                <th>
+                    Consumed Quantity
+                </th>
+                <th>
+                    Input Lot No.
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var line in assemblyOrder.assemblyOrderLines.ToArray())
+            {
+                <tr>
+                    <td>@line.lineNo</td>
+                    <td>@line.Description</td>
+                    <td>@line.Qty_per_Unit_of_Measure</td>
+                    <td>@line.Quantity</td>
+                    <td><input @bind="line.Quantity_to_Consume" /></td>
+                    <td>@line.Consumed_Quantity</td>
+                    <td><LotSelection itemStockStates="@GetItemInventory(line.No, line.Location_Code)" ItemDescription="@line.Description" 
+                                      ComponentQuantity="@line.Quantity" AssemblyOrderNo="@No" ItemNo="@line.No" LineNo="@line.lineNo" LocationCode="@line.Location_Code"/>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter]
+    public string No { get; set; }
+
+    private decimal? QuantityToPost;
+    ElementReference sel;
+
+    private List<string> selections = new List<string>();
+
+    private assemblyOrder assemblyOrder;
+
+    private bool APIError;
+    private string ErrorMessage;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            APIError = false;
+            assemblyOrder = await BCService.GetAssemblyOrder(No);
+            QuantityToPost = assemblyOrder.QuantityToAssemble;
+        }
+        catch (Exception ex)
+        {
+            APIError = true;
+            ErrorMessage = ex.InnerException.InnerException.Message;
+        }
+
+    }
+
+    protected itemStockState[] GetItemInventory(string itemNo, string location)
+    {
+        try
+        {
+            var itemInventory = BCService.GetItemStock(itemNo, location);
+
+            return itemInventory;
+        }
+        catch (Exception ex)
+        {
+            APIError = true;
+            ErrorMessage = ex.InnerException.Message;
+            return null;
+        }
+
+    }
+
+    protected async Task UpdateOrderQuantityToPost()
+    {
+        try
+        {
+            APIError = false;
+
+            await BCService.UpdateOrderQuantityToAssemble(No, QuantityToPost);
+            assemblyOrder = await BCService.GetAssemblyOrder(No);
+
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            APIError = true;
+            ErrorMessage = ex.InnerException.Message;
+
+        }
+    }
+
+    protected async Task PostOrder()
+    {
+        try
+        {
+            await UpdateOrderQuantityToPost();
+            APIError = false;
+            await BCService.UpdateQuantityToAssemble(No, QuantityToPost);
+            await BCService.PostAssemblyOrder(No);
+            assemblyOrder = await BCService.GetAssemblyOrder(No);
+            QuantityToPost = assemblyOrder.RemainingQuantity;
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            APIError = true;
+            ErrorMessage = ex.InnerException.Message;
+        }
+
+    }
+}

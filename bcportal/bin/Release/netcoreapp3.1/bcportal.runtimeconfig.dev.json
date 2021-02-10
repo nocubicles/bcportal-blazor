@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\villem\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\villem\\.nuget\\packages"
+    ]
+  }
+}

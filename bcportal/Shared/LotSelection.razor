@@ -1,0 +1,145 @@
+﻿
+@using Microsoft.NAV;
+@inject bcportal.Services.BCService BCService;
+
+@if (ShowPopUp)
+{
+    <div class="modal" tabindex="-1" style="display:block;background-color:darkslategrey" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content" style="width: auto;">
+                <div class="modal-header">
+                    <h3 class="modal-title">Select Lot Nos to use for @ItemDescription quantity @ComponentQuantity</h3>
+                    <p>Selected Quantity: @TotalSelectedQuantity</p>
+                    <button type="button" class="close"
+                            @onclick="ClosePopup">
+                        <span aria-hidden="true">X</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @if (APIError)
+                    {
+                        <span style="color:red">@ErrorMessage</span>
+                    }
+                    <div class="container-fluid">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Item No.
+                                    </th>
+                                    <th>
+                                        Lot No.
+                                    </th>
+                                    <th>
+                                        Reamining lot quantity
+                                    </th>
+                                    <th>
+                                        Quantity to use
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var itemStockState in itemStockStates)
+                                {
+                                    <tr>
+                                        <td>@itemStockState.itemNo</td>
+                                        <td>@itemStockState.lotNo</td>
+                                        <td>@itemStockState.remainingQuantity</td>
+                                        <td><input type="number" @onchange="@(e => UpdateSelectedQuantity(itemStockState.remainingQuantity, itemStockState.lotNo, e))" />@if (QuantityOver)
+                                        {<span style="color:red">Quantity over</span>}</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<button class="btn btn-primary" @onclick="ManageLotNos">
+    Lot Nos
+</button>
+
+@code {
+    [Parameter]
+    public itemStockState[] itemStockStates { get; set; }
+
+    [Parameter]
+    public decimal? ComponentQuantity { get; set; }
+
+    [Parameter]
+    public string ItemDescription { get; set; }
+
+    [Parameter]
+    public string AssemblyOrderNo { get; set; }
+
+    [Parameter]
+    public string ItemNo { get; set; }
+
+    [Parameter]
+    public string LocationCode { get; set; }
+
+    [Parameter]
+    public int LineNo { get; set; }
+
+    private bool ShowPopUp = false;
+    private bool QuantityOver = false;
+    private bool APIError = false;
+    private string ErrorMessage;
+
+    private decimal TotalSelectedQuantity;
+
+    void UpdateSelectedQuantity(decimal? remainingQuantity,string lotNo, ChangeEventArgs args)
+    {
+        decimal value = 0;
+        APIError = false;
+        ErrorMessage = "";
+        try
+        {
+            value = Decimal.Parse(args.Value.ToString());
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine("Error parsing input");
+        }
+
+        if (value > remainingQuantity)
+        {
+            QuantityOver = true;
+        } else
+        {
+            QuantityOver = false;
+        }
+
+        try
+        {
+            BCService.AddItemTrackingForComponent(value, AssemblyOrderNo, ItemNo, LocationCode, lotNo, LineNo);
+
+        } catch (Exception ex)
+        {
+            APIError = true;
+
+            ErrorMessage = ex.InnerException.Message;
+        }
+
+        UpdateTotalSelectedQuantity(value);
+    }
+
+    void UpdateTotalSelectedQuantity(decimal quantity)
+    {
+        TotalSelectedQuantity += quantity;
+    }
+
+    void ManageLotNos()
+    {
+        ShowPopUp = true;
+    }
+
+    void ClosePopup()
+    {
+        ShowPopUp = false;
+    }
+}
